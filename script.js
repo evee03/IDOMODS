@@ -16,9 +16,13 @@ function openMobileMenu() {
   const mobileMenu = document.getElementById('mobile-menu');
   const overlay = document.getElementById('mobile-overlay');
   
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  
   mobileMenu.classList.add('active');
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
+  
+  document.body.style.paddingRight = scrollbarWidth + 'px';
 }
 
 function closeMobileMenu() {
@@ -28,6 +32,8 @@ function closeMobileMenu() {
   mobileMenu.classList.remove('active');
   overlay.classList.remove('active');
   document.body.style.overflow = '';
+  
+  document.body.style.paddingRight = '';
 }
 
 document.addEventListener('click', function(event) {
