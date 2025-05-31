@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Forma'Sint - Responsive Navbar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- NAVBAR -->  
+   <nav class="navbar">    <div class="navbar-container">  
+    
+      <!-- logo container -->
+      <div class="navbar-item-container">
+        <div class="navbar-logo">
+          <a href="/" class="logo-link">
+            <img src="assets/FORMA ICON=Default.svg" alt="Forma'Sint Logo" class="logo-default">
+            <img src="assets/FORMA ICON=Fill.svg" alt="Forma'Sint Logo" class="logo-hover">
+          </a>
+          <span class="logo-text">Forma'Sint.</span>
+        </div>
+      </div>
+      
+      <!-- desktop menu navbar -->
+      <ul class="navbar-menu">
+        <li class="navbar-item"><a href="#" class="navbar-link">Home</a></li>
+        <li class="navbar-item"><a href="#" class="navbar-link">Featured Products</a></li>
+        <li class="navbar-item"><a href="#" class="navbar-link">Product Listing</a></li>      
+      </ul>
+      
+      <!-- right section container -->
+      <div class="navbar-item-container">
+        <div class="navbar-right">
+
+          <!-- desktop user icon -->
+          <div class="user-section">
+            <div class="user-icon">
+              <img src="assets/ICONS=Icon_user.svg" alt="User" class="user-icon-img">
+            </div>
+            <span class="user-text">Frontend Developer</span>
+          </div>
+          
+          <!-- mobile hamburger -->
+          <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <img src="assets/ICONS=MENU_HAMBURGER.svg" alt="Menu" class="hamburger-icon">
+            <span class="menu-text">Menu</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- mobile navbar menu overlay -->
+  <div id="mobile-overlay" class="mobile-overlay" onclick="closeMobileMenu()"></div>
+  
+  <!-- mobile navbar -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-header">
+      <div class="mobile-logo">
+        <img src="assets/FORMA ICON=Default.svg" alt="Forma'Sint Logo">
+      </div>      
+        <button class="mobile-close" onclick="closeMobileMenu()">
+        <img src="assets/ICONS=CLOSE.svg" alt="Close">
+        <span class="close-text">Close</span>
+      </button>
+    </div>
+    <ul class="mobile-menu-items">
+      <li><a href="#" onclick="closeMobileMenu()">Home</a></li>
+      <li><a href="#" onclick="closeMobileMenu()">Featured Products</a></li>
+      <li><a href="#" onclick="closeMobileMenu()">Product Listing</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="hero-section">
+      <h1>Logo</h1>
+      <p>photo</p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
