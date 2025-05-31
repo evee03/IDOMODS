@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>Forma'Sint - Responsive Navbar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -74,14 +75,41 @@
     </ul>
   </div>
 
-  <!-- Main Content -->
+  <!-- MAIN CONTENT -->
   <main class="main-content">
+
+    <!-- logo + photo -->
     <div class="hero-section">
       <img src="assets/LOGO FORMA.svg" alt="Logo" class="logo-container">
       <img src="assets/HERO PHOTO.svg" alt="Hero photo" class="hero-photo">
     </div>
+
+    <!-- FEATURED PRODUCTS SECTION -->
+    <section class="featured-section">
+      <div class="section-header">
+          <div class="section-subtitle">Featured Products</div>
+          <h2 class="section-title">Browse featured</h2>
+      </div>            
+      
+      <div class="slider-container">
+        <div class="swiper products-swiper">
+            <div class="swiper-wrapper" id="products-container">
+              <!-- products will be loaded here -->
+            </div>
+              <!-- navigation buttons -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+              <!-- pagination -->
+            <div class="custom-pagination">
+              <div class="custom-pagination-handle"></div>
+            </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
