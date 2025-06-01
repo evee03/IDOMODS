@@ -179,24 +179,26 @@ class ProductSlider {
       const badgeClass = badgeType === 'limited' ? 'badge-limited' : 'badge-bestseller';
       
       return `
-          <div class="swiper-slide">
+            <div class="swiper-slide">
               <div class="product-card">
-                  <div class="product-header">
-                      ${badge ? `<div class="product-badge ${badgeClass}">${badge}</div>` : '<div></div>'}
-                      <button class="favorite-btn">
-                          <img src="./assets/FAV ICON=Default.svg" alt="Favorite" class="favorite-default">
-                          <img src="./assets/FAV ICON=Fill.svg" alt="Favorite" class="favorite-hover">
-                      </button>
-                  </div>
-                  <div class="product-image">
-                      <img src="${image}" alt="${name}">
-                  </div>
-                  <div class="product-info">
-                      <h3 class="product-title">${name}</h3>
-                      <div class="product-price">${formattedPrice}</div>
-                  </div>
-              </div>
-          </div>
+                    <div class="product-header">
+                        ${badge ? `<div class="product-badge ${badgeClass}">${badge}</div>` : '<div></div>'}
+                        <button class="favorite-btn">                          
+                            <img src="./assets/FAV ICON=Default.svg" alt="Favorite" class="favorite-default" width="24" height="24" loading="lazy">
+                            <img src="./assets/FAV ICON=Fill.svg" alt="Favorite" class="favorite-hover" width="24" height="24" loading="lazy">
+                        </button>
+                    </div> 
+
+                    <div class="product-image">
+                        <img src="${image}" alt="${name}" width="300" height="300" loading="lazy">
+                    </div>
+
+                    <div class="product-info">
+                        <h3 class="product-title">${name}</h3>
+                        <div class="product-price">${formattedPrice}</div>
+                    </div>
+                </div>
+            </div>
       `;
     }    
     
@@ -431,11 +433,9 @@ class ProductsSection {
     
     createProductCard(product) {
         const card = document.createElement('div');
-        card.className = 'product-card';
-        
-        card.innerHTML = `
+        card.className = 'product-card';        card.innerHTML = `
             <div class="product-id-overlay">ID: ${product.id}</div>
-            <img src="${product.image}" alt="Product ${product.id}" class="product-image">
+            <img src="${product.image}" alt="Product ${product.id}" class="product-image" width="341" height="341" loading="lazy">
         `;
 
         card.addEventListener('click', () => {
