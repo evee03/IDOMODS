@@ -54,6 +54,56 @@ window.addEventListener('resize', function() {
 });
 
 //-----------------------------------------------------------------------------------
+// Smooth scrolling navigation
+//-----------------------------------------------------------------------------------
+function initSmoothScrolling() {
+  // Handle desktop navigation links
+  const desktopLinks = document.querySelectorAll('.navbar-link[href^="#"]');
+  desktopLinks.forEach(link => {
+    link.addEventListener('click', handleSmoothScroll);
+  });
+
+  // Handle mobile navigation links
+  const mobileLinks = document.querySelectorAll('.mobile-menu-items a[href^="#"]');
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', handleSmoothScroll);
+  });
+}
+
+function handleSmoothScroll(e) {
+  e.preventDefault();
+  
+  const targetId = this.getAttribute('href');
+  const targetElement = document.querySelector(targetId);
+  
+  if (targetElement) {
+    // Close mobile menu if it's open
+    if (this.closest('.mobile-menu-items')) {
+      closeMobileMenu();
+    }
+    
+    // Calculate offset to account for fixed navbar
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    const targetPosition = targetElement.offsetTop - navbarHeight - 20; // Extra 20px padding
+    
+    // Small delay for mobile menu close animation
+    const delay = this.closest('.mobile-menu-items') ? 300 : 0;
+    
+    setTimeout(() => {
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+    }, delay);
+  }
+}
+
+// Initialize smooth scrolling when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  initSmoothScrolling();
+});
+
+//-----------------------------------------------------------------------------------
 // class productSlider - manages the featured products carousel
 // handles product display, Swiper configuration, and custom pagination
 //-----------------------------------------------------------------------------------
@@ -207,8 +257,304 @@ class ProductSlider {
   }
 }
 
+//-----------------------------------------------------------------------------------
+// class manages the product display section of the webpage, it handles fetching products from an external API, 
+// displaying them in a responsive grid layout, and implements infinite scrolling functionality to load more products as the user scrolls down.
+// additionally, it manages a promotional banner placed between products, handles the product per page dropdown selector, 
+// and provides popup functionality for viewing product details when clicked.
+//-----------------------------------------------------------------------------------
+class ProductsSection {
+    constructor() {
+        this.currentPage = 1;
+        this.pageSize = 14;
+        this.allProducts = [];
+        this.bannerShown = false;
+        this.hasMoreProducts = true;
+        
+        this.init();
+    }
+      init() {
+        this.bindEvents();
+        this.updateDropdownOptions(); 
+        this.loadProducts();
+    }
+    
+    bindEvents() {
+        const pageSelect = document.getElementById('pageSize');
+        const customDropdown = document.getElementById('customDropdown');
+        const dropdownSelected = document.getElementById('dropdownSelected');
+        const dropdownOptions = document.getElementById('dropdownOptions');
+        
+        dropdownSelected.addEventListener('click', () => {
+            this.updateDropdownOptions();
+            const isOpen = dropdownOptions.classList.contains('show');
+            
+            if (isOpen) {
+                dropdownOptions.classList.remove('show');
+                customDropdown.classList.remove('active');
+            } else {
+                dropdownOptions.classList.add('show');
+                customDropdown.classList.add('active');
+            }
+        });
+        
+        dropdownOptions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('custom-dropdown-option')) {
+                const value = e.target.getAttribute('data-value');
+                const text = e.target.textContent;
+                
+                dropdownSelected.textContent = text;
+                
+                pageSelect.value = value;
+                
+                dropdownOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                e.target.classList.add('selected');
+                
+                dropdownOptions.classList.remove('show');
+                customDropdown.classList.remove('active');
+                
+                this.pageSize = parseInt(value);                
+                this.resetAndLoad();
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!customDropdown.contains(e.target)) {
+                dropdownOptions.classList.remove('show');
+                customDropdown.classList.remove('active');
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            if (this.shouldLoadMore()) {
+                this.loadProducts();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (this.bannerShown) {
+                this.repositionBanner();
+            }
+        });
+
+        document.getElementById('popupClose').addEventListener('click', () => {
+            this.closePopup();
+        });
+
+        document.getElementById('popup').addEventListener('click', (e) => {
+            if (e.target.id === 'popup') {
+                this.closePopup();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closePopup();
+            }
+        });
+    }    updateDropdownOptions() {
+        const dropdownOptions = document.getElementById('dropdownOptions');
+        const currentValue = this.pageSize;
+        
+        const allOptions = [14, 24, 36];
+        
+        const availableOptions = allOptions.filter(option => option !== currentValue);
+        
+        dropdownOptions.innerHTML = '';
+        
+        availableOptions.forEach((value, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.className = 'custom-dropdown-option';
+            optionElement.setAttribute('data-value', value);
+            optionElement.textContent = value;
+            
+            if (index === 0 && availableOptions.length > 1) {
+                optionElement.classList.add('first-option');
+            }
+            
+            if (index === 1) {
+                optionElement.classList.add('second-option');
+            }
+            
+            dropdownOptions.appendChild(optionElement);
+        });
+    }
+    
+    async loadProducts() {
+        if (this.hasMoreProducts) {
+            const response = await fetch(`https://brandstestowy.smallhost.pl/api/random?pageNumber=${this.currentPage}&pageSize=${this.pageSize}`);
+            const result = await response.json();
+            
+            if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+                this.allProducts.push(...result.data);
+                this.renderProducts(result.data);
+                this.currentPage++;
+                
+                if (!this.bannerShown && this.allProducts.length >= 8) {
+                    this.showBanner();
+                }
+                
+                if (result.totalCount && this.allProducts.length >= result.totalCount) {
+                    this.hasMoreProducts = false;
+                }
+            } else {
+                this.hasMoreProducts = false;
+            }
+        }
+    }renderProducts(products) {
+        const grid = document.getElementById('productsGrid');
+        
+        products.forEach(product => {
+            const productCard = this.createProductCard(product);
+            grid.appendChild(productCard);
+        });
+        
+        this.ensureBannerVisibility();
+    }
+      ensureBannerVisibility() {
+        if (!this.bannerShown) return;
+        
+        const banner = document.getElementById('banner');
+        const grid = document.getElementById('productsGrid');
+        
+        if (!banner || !grid) return;
+        
+        if (!grid.contains(banner)) {
+            this.repositionBanner();
+        } else if (banner.style.display === 'none') {
+            banner.style.display = 'flex';
+        }
+    }
+    
+    createProductCard(product) {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        
+        card.innerHTML = `
+            <div class="product-id-overlay">ID: ${product.id}</div>
+            <img src="${product.image}" alt="Product ${product.id}" class="product-image">
+        `;
+
+        card.addEventListener('click', () => {
+            this.openPopup(product);
+        });
+
+        return card;
+    }openPopup(product) {
+        document.getElementById('popupId').textContent = `ID: ${product.id}`;
+        document.getElementById('popupImage').src = product.image;
+        if (product.text) {
+            document.getElementById('popupImage').alt = product.text;
+        }
+        document.getElementById('popup').style.display = 'flex';
+    }
+    
+    closePopup() {
+        document.getElementById('popup').style.display = 'none';
+    }    showBanner() {
+        if (this.bannerShown) return;
+        
+        const banner = document.getElementById('banner');
+        const grid = document.getElementById('productsGrid');
+        
+        if (!banner || !grid) return;
+        
+        let columns = 4;
+        if (window.innerWidth <= 970) {
+            columns = 2;
+        }
+        
+        const productCards = Array.from(grid.children).filter(card => !card.classList.contains('banner'));
+        let insertAfterIndex;
+        
+        if (columns === 2) {
+            insertAfterIndex = 3; 
+        } else {
+            insertAfterIndex = columns; 
+        }
+        
+        if (productCards.length > insertAfterIndex && productCards[insertAfterIndex]) {
+            productCards[insertAfterIndex].insertAdjacentElement('afterend', banner);
+        } else {
+            grid.appendChild(banner);
+        }
+        
+        banner.style.display = 'flex';
+        this.bannerShown = true;
+    }    resetAndLoad() {
+        this.currentPage = 1;
+        this.allProducts = [];
+        this.bannerShown = false;
+        this.hasMoreProducts = true;
+        
+        const grid = document.getElementById('productsGrid');
+        if (grid) {
+            grid.innerHTML = '';
+        }
+        
+        const banner = document.getElementById('banner');
+        const container = document.querySelector('.container');
+        
+        if (banner && container) {
+            banner.style.display = 'none';
+            if (!container.contains(banner)) {
+                container.appendChild(banner);
+            }
+        }
+        
+        this.loadProducts();
+    }    shouldLoadMore() {
+        if (!this.hasMoreProducts) return false;
+        
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        return scrollTop + windowHeight >= documentHeight - 1000;
+    }
+
+    repositionBanner() {
+        if (!this.bannerShown) return;
+        
+        const banner = document.getElementById('banner');
+        const grid = document.getElementById('productsGrid');
+        
+        if (!banner || !grid) return;
+        
+        if (banner.parentNode === grid) {
+            banner.remove();
+        }
+        
+        let columns = 4;
+        if (window.innerWidth <= 970) {
+            columns = 2;
+        }
+        
+        const productCards = Array.from(grid.children).filter(card => !card.classList.contains('banner'));
+        let insertAfterIndex;
+        
+        if (columns === 2) {
+            insertAfterIndex = 3; 
+        } else {
+            insertAfterIndex = columns; 
+        }
+        
+        if (productCards.length > insertAfterIndex && productCards[insertAfterIndex]) {
+            productCards[insertAfterIndex].insertAdjacentElement('afterend', banner);
+        } else {
+            grid.appendChild(banner);
+        }
+        
+        banner.style.display = 'flex';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     new ProductSlider();
+    new ProductsSection(); 
 });
 
 //----------------------------------------------------------------------------------
