@@ -435,7 +435,7 @@ class ProductsSection {
         const card = document.createElement('div');
         card.className = 'product-card';        card.innerHTML = `
             <div class="product-id-overlay">ID: ${product.id}</div>
-            <img src="${product.image}" alt="Product ${product.id}" class="product-image" width="341" height="341" loading="lazy">
+            <img src="${product.image}" alt="Product ${product.id}" class="product-image">
         `;
 
         card.addEventListener('click', () => {

@@ -15,29 +15,6 @@
   --spacing: 1.5rem;
 }
 
-/* Image optimization for CLS prevention */
-img {
-  height: auto;
-  max-width: 100%;
-}
-
-/* Ensure images with defined dimensions remain responsive */
-img[width][height] {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  aspect-ratio: attr(width) / attr(height);
-}
-
-/* Fallback for browsers that don't support aspect-ratio */
-@supports not (aspect-ratio: 1) {
-  img[width][height] {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-  }
-}
-
 * {
   margin: 0;
   padding: 0;
