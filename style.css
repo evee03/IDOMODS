@@ -1,3 +1,40 @@
+
+/* ========================================
+   CRITICAL CSS FOR LCP OPTIMIZATION
+   These styles are loaded first for above-the-fold content
+   ======================================== */
+
+/* Main content layout - critical for LCP */
+.main-content {
+  margin-top: 80px;
+}
+
+/* Hero section - critical for LCP */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 42px;
+  width: 100%;
+}
+
+.logo-container {
+  display: flex;
+  margin-top: 60px;
+  width: 48%;
+}
+
+.hero-photo {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ========================================
+   CSS VARIABLES AND RESET
+   ======================================== */
+
 :root {
   /* primary colors */
   --grey: #6c757d;
@@ -284,33 +321,10 @@ body {
   text-decoration-color: var(--main-color);
 }
 
-/* main content */
-.main-content {
-  margin-top: 80px;
-}
+/* ========================================
+   FEATURED PRODUCTS SECTION - SLIDER
+   ======================================== */
 
-.logo-container {
-  display: flex;
-  margin-top: 60px;
-  width: 48%;
-}
-
-.hero-photo{
-  width: 100%;
-  height: 100vh;
-  object-fit: cover;
-  object-position: center;
-}
-
-.hero-section {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  gap: 42px;
-  width: 100%;
-}
-
-/* slider*/
 .featured-section {
     margin-top: 60px;
 }

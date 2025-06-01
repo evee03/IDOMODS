@@ -171,12 +171,15 @@ class ProductSlider {
 
       const productsHTML = this.mockProducts.map(product => this.createProductCard(product)).join('');
       container.innerHTML = productsHTML;
-    }
-
-    createProductCard(product) {
+    }    createProductCard(product) {
       const { id, name, price, image, badge, badgeType } = product;
       const formattedPrice = `€${price.toFixed(2)} EUR`;
       const badgeClass = badgeType === 'limited' ? 'badge-limited' : 'badge-bestseller';
+      
+      // Set loading strategy - eager for first 2 products, lazy for others
+      const isFirstProduct = id <= 2;
+      const loadingStrategy = isFirstProduct ? 'eager' : 'lazy';
+      const fetchPriority = isFirstProduct ? 'high' : 'auto';
       
       return `
             <div class="swiper-slide">
@@ -190,7 +193,7 @@ class ProductSlider {
                     </div> 
 
                     <div class="product-image">
-                        <img src="${image}" alt="${name}" width="300" height="300" loading="lazy">
+                        <img src="${image}" alt="${name}" width="300" height="300" loading="${loadingStrategy}" fetchpriority="${fetchPriority}">
                     </div>
 
                     <div class="product-info">
@@ -200,7 +203,7 @@ class ProductSlider {
                 </div>
             </div>
       `;
-    }    
+    }
     
   initSwiper() {
     this.swiper = new Swiper('.products-swiper', {
@@ -384,13 +387,17 @@ class ProductsSection {
             dropdownOptions.appendChild(optionElement);
         });
     }
-    
-    async loadProducts() {
+      async loadProducts() {
         if (this.hasMoreProducts) {
             const response = await fetch(`https://brandstestowy.smallhost.pl/api/random?pageNumber=${this.currentPage}&pageSize=${this.pageSize}`);
             const result = await response.json();
             
             if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+                // Preload first 4 product images if this is the first page
+                if (this.currentPage === 1) {
+                    this.preloadFirstProducts(result.data.slice(0, 4));
+                }
+                
                 this.allProducts.push(...result.data);
                 this.renderProducts(result.data);
                 this.currentPage++;
@@ -406,11 +413,23 @@ class ProductsSection {
                 this.hasMoreProducts = false;
             }
         }
-    }renderProducts(products) {
+    }
+
+    preloadFirstProducts(products) {
+        products.forEach(product => {
+            if (product.image) {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'image';
+                link.href = product.image;
+                document.head.appendChild(link);
+            }
+        });
+    }    renderProducts(products) {
         const grid = document.getElementById('productsGrid');
         
-        products.forEach(product => {
-            const productCard = this.createProductCard(product);
+        products.forEach((product, index) => {
+            const productCard = this.createProductCard(product, this.allProducts.length - products.length + index);
             grid.appendChild(productCard);
         });
         
@@ -430,12 +449,18 @@ class ProductsSection {
             banner.style.display = 'flex';
         }
     }
-    
-    createProductCard(product) {
+      createProductCard(product, globalIndex = 0) {
         const card = document.createElement('div');
-        card.className = 'product-card';        card.innerHTML = `
+        card.className = 'product-card';
+        
+        // Optimize loading for first visible products
+        const isFirstProduct = globalIndex < 4;
+        const loadingStrategy = isFirstProduct ? 'eager' : 'lazy';
+        const fetchPriority = isFirstProduct ? 'high' : 'auto';
+        
+        card.innerHTML = `
             <div class="product-id-overlay">ID: ${product.id}</div>
-            <img src="${product.image}" alt="Product ${product.id}" class="product-image">
+            <img src="${product.image}" alt="Product ${product.id}" class="product-image" loading="${loadingStrategy}" fetchpriority="${fetchPriority}">
         `;
 
         card.addEventListener('click', () => {

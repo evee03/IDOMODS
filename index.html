@@ -4,11 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Discover premium alpine climbing equipment and outdoor gear at Forma'Sint. Browse our featured products including helmets, jackets, harnesses and safety equipment for professional climbers and outdoor enthusiasts.">
-    <link rel="icon" href="assets/FORMA ICON=Default.svg" type="image/svg+xml">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/FORMA ICON=Default.svg" type="image/svg+xml">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Preload critical images for LCP optimization -->
+    <link rel="preload" href="assets/HERO PHOTO.svg" as="image" type="image/svg+xml">
+    <link rel="preload" href="assets/LOGO FORMA.svg" as="image" type="image/svg+xml">
+    <link rel="preload" href="assets/product_photo_01.png" as="image" type="image/png">
+    <link rel="preload" href="assets/product_photo_02.png" as="image" type="image/png">
+    <link rel="preload" href="assets/product_photo_03.png" as="image" type="image/png">
+    
+    <!-- Preconnect to API domain for faster product loading -->
+    <link rel="preconnect" href="https://brandstestowy.smallhost.pl">
+    <link rel="dns-prefetch" href="https://brandstestowy.smallhost.pl">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>Forma'Sint</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css">
+    <title>Forma'Sint</title>    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -85,11 +94,9 @@
   </div>
 
   <!-- MAIN CONTENT -->  
-   <main class="main-content">    
-
-    <!-- logo + photo -->      <div class="hero-section" id="home">
+   <main class="main-content">        <!-- logo + photo -->      <div class="hero-section" id="home">
       <img src="assets/LOGO FORMA.svg" alt="Logo" class="logo-container">
-      <img src="assets/HERO PHOTO.svg" alt="Hero photo" class="hero-photo">
+      <img src="assets/HERO PHOTO.svg" alt="Hero photo" class="hero-photo" fetchpriority="high">
     </div>
 
     <!-- FEATURED PRODUCTS SECTION -->
