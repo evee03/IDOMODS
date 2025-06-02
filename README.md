@@ -1,0 +1,1 @@
+W poszczególnych katalogach znajdują się projekty na frontend i backend.
